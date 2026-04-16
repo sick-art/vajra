@@ -1,0 +1,137 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vectorhouse
+      POSTGRES_PASSWORD: vectorhouse
+      POSTGRES_DB: vectorhouse
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vectorhouse"]
+      interval: 5s
+      retries: 5
+
+  temporal-server:
+    image: temporalio/auto-setup:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB=postgres12
+      - POSTGRES_SEEDS=postgres
+      - DB_PORT=5432
+      - DB_NAME=temporal
+      - POSTGRES_USER=vectorhouse
+      - POSTGRES_PWD=vectorhouse
+      - DB_VISIBILITY_NAME=temporal_visibility
+      - ENABLE_SQL_DATA_CONVERTER=false
+      - TEMPORAL_ADDRESS=temporal-server:7233
+      - TEMPORAL_CLI_ADDRESS=temporal-server:7233
+    ports:
+      - "7233:7233"
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "tctl", "--address", "temporal-server:7233", "cluster", "health"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    depends_on:
+      temporal-server:
+        condition: service_healthy
+    environment:
+      - TEMPORAL_ADDRESS=temporal-server:7233
+    ports:
+      - "8088:8080"
+
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/8000"]
+      interval: 5s
+      retries: 5
+
+  vectorhouse-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uv", "run", "alembic", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      VH_POSTGRES_URL: postgresql+asyncpg://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+      VH_POSTGRES_SYNC_URL: postgresql://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+
+  vectorhouse-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uv", "run", "uvicorn", "vectorhouse.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal-server:
+        condition: service_healthy
+      chroma:
+        condition: service_healthy
+      vectorhouse-migrate:
+        condition: service_completed_successfully
+    environment:
+      VH_POSTGRES_URL: postgresql+asyncpg://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+      VH_POSTGRES_SYNC_URL: postgresql://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+      VH_TEMPORAL_HOST: temporal-server:7233
+      VH_CHROMA_HOST: chroma
+      VH_CHROMA_PORT: 8000
+      VH_LANCEDB_PATH: /data/lancedb
+    ports:
+      - "8000:8000"
+    volumes:
+      - lancedb-data:/data/lancedb
+
+  vectorhouse-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uv", "run", "python", "-m", "vectorhouse.worker"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal-server:
+        condition: service_healthy
+      chroma:
+        condition: service_healthy
+    environment:
+      VH_POSTGRES_URL: postgresql+asyncpg://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+      VH_POSTGRES_SYNC_URL: postgresql://vectorhouse:vectorhouse@postgres:5432/vectorhouse
+      VH_TEMPORAL_HOST: temporal-server:7233
+      VH_CHROMA_HOST: chroma
+      VH_CHROMA_PORT: 8000
+      VH_LANCEDB_PATH: /data/lancedb
+    volumes:
+      - lancedb-data:/data/lancedb
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      vectorhouse-api:
+        condition: service_started
+
+volumes:
+  pgdata:
+  lancedb-data:
+  chroma-data:

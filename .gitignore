@@ -1,0 +1,158 @@
+# ---------- Secrets & local config ----------
+# Never commit anything that may contain credentials, tokens, or API keys.
+.env
+.env.*
+!.env.example
+*.env
+env/
+.envrc
+
+# Generic credential / key files
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.cer
+*.der
+*.jks
+*.keystore
+*.asc
+*.gpg
+secrets/
+secret/
+credentials/
+*credentials*
+*secret*
+*token*
+*apikey*
+*api-key*
+*api_key*
+service-account*.json
+serviceAccount*.json
+gcp-key*.json
+aws-credentials*
+
+# Editor / tool local settings (may contain auth/permissions)
+.claude/settings.json
+.claude/settings.local.json
+.claude/settings_bcup.json
+.vscode/settings.json
+.idea/
+*.code-workspace
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+develop-eggs/
+dist/
+downloads/
+sdist/
+wheels/
+share/python-wheels/
+.installed.cfg
+MANIFEST
+
+# Environments
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.cache
+
+# Type checkers / linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ---------- Node / Frontend ----------
+node_modules/
+dist/
+dist-ssr/
+build/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.vercel/
+.netlify/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local Vite / framework artefacts
+*.local
+
+# ---------- MkDocs ----------
+site/
+
+# ---------- Docker / runtime data ----------
+data/
+lancedb-data/
+chroma-data/
+pgdata/
+*.sqlite
+*.sqlite3
+*.db
+
+# ---------- OS / Editor noise ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.rej
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ---------- Claude / agents local state ----------
+.agents/skills/
+skills-lock.json
+
+# ---------- Misc ----------
+*.pid
+*.seed
+*.pid.lock
