@@ -8,7 +8,7 @@ VAJRA (codename **VectorHouse**) is a unified control plane for ingesting, gover
 
 ## Documentation
 
-Full documentation is hosted at **<https://aartityagi.in/vajra>**.
+Full documentation is hosted at **<http://aartityagi.in/vajra>**.
 
 - Architecture, pipelines, API reference, concepts and deployment guides all live there.
 - Source for the docs lives in [`docs/`](docs/) and is built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) — see [`mkdocs.yml`](mkdocs.yml).
@@ -58,7 +58,7 @@ For docs:
 uv run mkdocs serve   # → http://localhost:8000
 ```
 
-See the [Development Guide](https://aartityagi.in/vajra/development/) and [Deployment Guide](https://aartityagi.in/vajra/deployment/) for the full workflow.
+See the [Development Guide](http://aartityagi.in/vajra/development/) and [Deployment Guide](http://aartityagi.in/vajra/deployment/) for the full workflow.
 
 ---
 
@@ -66,7 +66,7 @@ See the [Development Guide](https://aartityagi.in/vajra/development/) and [Deplo
 
 All runtime config is read from environment variables prefixed with `VH_` (see [`src/vectorhouse/config.py`](src/vectorhouse/config.py)). Local overrides go in a `.env` file — **never commit `.env` or any file containing keys, tokens, or credentials**; `.gitignore` enforces this.
 
-Reference: [Configuration docs](https://aartityagi.in/vajra/configuration/).
+Reference: [Configuration docs](http://aartityagi.in/vajra/configuration/).
 
 ---
 

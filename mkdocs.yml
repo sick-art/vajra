@@ -6,7 +6,7 @@ site_dir: site
 
 repo_name: sick-art/vajra
 repo_url: https://github.com/sick-art/vajra
-site_url: https://aartityagi.in/vajra/
+site_url: http://aartityagi.in/vajra/
 
 theme:
   name: material

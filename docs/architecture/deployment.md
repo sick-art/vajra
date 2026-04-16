@@ -17,7 +17,7 @@ VAJRA supports four deployment models, from local development to enterprise Kube
 
 ## Docker Compose Stack
 
-The [`docker-compose.yml`](../../docker-compose.yml) brings up the complete VAJRA stack:
+The [`docker-compose.yml`](https://github.com/sick-art/vajra/blob/main/docker-compose.yml) brings up the complete VAJRA stack:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

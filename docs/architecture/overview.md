@@ -69,7 +69,7 @@ Audit log writes are decoupled from the query path — queries return to the cal
 
 ## Deployment Components
 
-The full stack is defined in [`docker-compose.yml`](../../docker-compose.yml):
+The full stack is defined in [`docker-compose.yml`](https://github.com/sick-art/vajra/blob/main/docker-compose.yml):
 
 | Service | Image | Purpose |
 |---------|-------|---------|
