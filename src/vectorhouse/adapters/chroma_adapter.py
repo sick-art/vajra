@@ -28,6 +28,7 @@ class ChromaAdapter(VectorStoreAdapter):
         documents = [r.text for r in records if r.text is not None] or None
 
         # chroma requires metadatas to have string/bool/int/float values
+        # and rejects empty dicts
         clean_metadatas = []
         for m in metadatas:
             clean = {}
@@ -36,7 +37,11 @@ class ChromaAdapter(VectorStoreAdapter):
                     clean[k] = v
                 else:
                     clean[k] = str(v)
-            clean_metadatas.append(clean)
+            clean_metadatas.append(clean if clean else None)
+
+        # If all metadatas are None, pass None instead of a list of Nones
+        if all(m is None for m in clean_metadatas):
+            clean_metadatas = None
 
         coll.upsert(
             ids=ids,

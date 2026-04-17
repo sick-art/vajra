@@ -50,7 +50,7 @@ class LanceDBAdapter(VectorStoreAdapter):
         try:
             table = db.open_table(collection)
             table.merge_insert("id").when_matched_update_all().when_not_matched_insert_all().execute(data)
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             db.create_table(collection, data)
 
         return len(records)
@@ -65,7 +65,7 @@ class LanceDBAdapter(VectorStoreAdapter):
         db = self._get_db()
         try:
             table = db.open_table(collection)
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return []
 
         query_builder = table.search(vector).limit(top_k)
@@ -97,7 +97,7 @@ class LanceDBAdapter(VectorStoreAdapter):
         db = self._get_db()
         try:
             table = db.open_table(collection)
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return []
 
         try:
@@ -123,7 +123,7 @@ class LanceDBAdapter(VectorStoreAdapter):
         db = self._get_db()
         try:
             table = db.open_table(collection)
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return 0
         table.delete(f"id IN ({', '.join(repr(i) for i in ids)})")
         return len(ids)
@@ -155,5 +155,5 @@ class LanceDBAdapter(VectorStoreAdapter):
             if vec_field:
                 dims = vec_field.type.list_size if hasattr(vec_field.type, "list_size") else 0
             return {"count": count, "dimensions": dims}
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return {"count": 0, "dimensions": 0}

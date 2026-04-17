@@ -121,6 +121,10 @@ function buildRecords(
   }))
 }
 
+function isBinaryFile(file: File): boolean {
+  return file.name.toLowerCase().endsWith(".pdf") || file.name.toLowerCase().endsWith(".docx")
+}
+
 async function readFileAsText(file: File): Promise<string> {
   if (
     file.type === "text/plain" ||
@@ -129,8 +133,8 @@ async function readFileAsText(file: File): Promise<string> {
   ) {
     return file.text()
   }
-  // PDF/DOCX: placeholder — extraction happens server-side
-  return `[Binary file: ${file.name} (${(file.size / 1024).toFixed(1)} KB) — text will be extracted during ingestion]`
+  // Binary files (PDF/DOCX) will be uploaded via the /upload endpoint for server-side extraction
+  return ""
 }
 
 // ---- Chunk colors ----
@@ -930,20 +934,6 @@ function Step5Review({
       onError("")
       setLoadingText("Reading source content…")
 
-      // Build text from source
-      let fullText = ""
-      let sourceName = "pipeline"
-      if (config.sourceType === "file") {
-        const texts = await Promise.all(config.files.map(readFileAsText))
-        fullText = texts.join("\n\n---\n\n")
-        sourceName = config.files.map((f) => f.name).join(", ")
-      } else {
-        fullText = config.rawText
-        sourceName = "text-input"
-      }
-
-      setLoadingText("Chunking content…")
-
       // If creating new collection, create it first
       if (config.collectionMode === "new" && config.collection) {
         setLoadingText("Creating collection…")
@@ -955,14 +945,49 @@ function Step5Review({
         })
       }
 
-      setLoadingText("Building records…")
-      const records = buildRecords(fullText, config.chunkSize, config.chunkOverlap, sourceName)
+      // Check if any files need server-side extraction (PDF/DOCX)
+      const binaryFiles = config.sourceType === "file" ? config.files.filter(isBinaryFile) : []
+      const textFiles = config.sourceType === "file" ? config.files.filter((f) => !isBinaryFile(f)) : []
 
-      setLoadingText(`Triggering ingest (${records.length} records)…`)
-      const resp = await ingestApi.ingest(config.collection, {
-        records,
-        store_type: config.storeType,
-      })
+      let resp: { workflow_id: string }
+
+      if (binaryFiles.length > 0 && textFiles.length === 0) {
+        // All files are binary — upload each via the /upload endpoint
+        setLoadingText(`Uploading ${binaryFiles.length} file(s) for server-side extraction…`)
+        let lastResp = { workflow_id: "" }
+        for (const file of binaryFiles) {
+          setLoadingText(`Uploading ${file.name}…`)
+          lastResp = await ingestApi.uploadFile(config.collection, file, {
+            store_type: config.storeType,
+            chunk_strategy: config.chunkStrategy,
+            chunk_size: config.chunkSize,
+            chunk_overlap: config.chunkOverlap,
+          })
+        }
+        resp = lastResp
+      } else {
+        // Text files or raw text — use the existing JSON ingest path
+        let fullText = ""
+        let sourceName = "pipeline"
+        if (config.sourceType === "file") {
+          const allFiles = [...textFiles, ...binaryFiles]
+          const texts = await Promise.all(allFiles.map(readFileAsText))
+          fullText = texts.filter(Boolean).join("\n\n---\n\n")
+          sourceName = allFiles.map((f) => f.name).join(", ")
+        } else {
+          fullText = config.rawText
+          sourceName = "text-input"
+        }
+
+        setLoadingText("Building records…")
+        const records = buildRecords(fullText, config.chunkSize, config.chunkOverlap, sourceName)
+
+        setLoadingText(`Triggering ingest (${records.length} records)…`)
+        resp = await ingestApi.ingest(config.collection, {
+          records,
+          store_type: config.storeType,
+        })
+      }
 
       // Save template if requested
       if (saveAsTemplate && templateName.trim()) {

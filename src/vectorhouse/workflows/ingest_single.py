@@ -3,6 +3,7 @@ from datetime import timedelta
 from typing import Any
 
 from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
     from vectorhouse.activities.audit_log import audit_log
@@ -141,7 +142,7 @@ class IngestSingleWorkflow:
                 params.metadata,
             ],
             start_to_close_timeout=timedelta(seconds=15),
-            retry_policy=workflow.RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
                 backoff_coefficient=2.0,
             ),
@@ -162,7 +163,7 @@ class IngestSingleWorkflow:
                 {"record_id": params.record_id},
             ],
             start_to_close_timeout=timedelta(seconds=5),
-            retry_policy=workflow.RetryPolicy(maximum_attempts=2),
+            retry_policy=RetryPolicy(maximum_attempts=2),
         )
 
         return IngestSingleResult(status="success")

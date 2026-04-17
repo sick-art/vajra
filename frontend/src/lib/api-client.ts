@@ -265,6 +265,29 @@ export const collectionApi = {
 export const ingestApi = {
   ingest: (collection: string, data: IngestRequest) =>
     apiPost<IngestResponse>(`/v1/ingest/${collection}`, data),
+
+  uploadFile: async (
+    collection: string,
+    file: File,
+    opts: { store_type: string; chunk_strategy?: string; chunk_size?: number; chunk_overlap?: number },
+  ): Promise<IngestResponse> => {
+    const form = new FormData()
+    form.append("file", file)
+    const params = new URLSearchParams({ store_type: opts.store_type })
+    if (opts.chunk_strategy) params.set("chunk_strategy", opts.chunk_strategy)
+    if (opts.chunk_size) params.set("chunk_size", String(opts.chunk_size))
+    if (opts.chunk_overlap) params.set("chunk_overlap", String(opts.chunk_overlap))
+
+    const res = await fetch(`/v1/ingest/${collection}/upload?${params}`, {
+      method: "POST",
+      body: form,
+    })
+    if (!res.ok) {
+      const detail = await res.text().catch(() => res.statusText)
+      throw new Error(`${res.status}: ${detail}`)
+    }
+    return res.json()
+  },
 }
 
 export const queryApi = {

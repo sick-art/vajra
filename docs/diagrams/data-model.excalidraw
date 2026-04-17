@@ -1525,7 +1525,7 @@
       "x": 533.6002197265625,
       "y": 1015.2000122070312,
       "width": 310,
-      "height": 220,
+      "height": 257.59997558593744,
       "angle": 0,
       "strokeColor": "#2f9e44",
       "backgroundColor": "#d3f9d8",
@@ -1541,8 +1541,8 @@
         "type": 3
       },
       "seed": 140073,
-      "version": 302,
-      "versionNonce": 1562860939,
+      "version": 315,
+      "versionNonce": 1869490015,
       "isDeleted": false,
       "boundElements": [
         {
@@ -1554,7 +1554,7 @@
           "type": "arrow"
         }
       ],
-      "updated": 1776356881403,
+      "updated": 1776388815029,
       "link": null,
       "locked": false
     },
@@ -1642,10 +1642,10 @@
     {
       "id": "dm_evalresult_fields",
       "type": "text",
-      "x": 549.6002197265625,
+      "x": 550.3052627563477,
       "y": 1063.2000122070312,
-      "width": 282,
-      "height": 160,
+      "width": 214.7339630126953,
+      "height": 174.62244644165028,
       "angle": 0,
       "strokeColor": "#1a7431",
       "backgroundColor": "transparent",
@@ -1659,15 +1659,15 @@
       "index": "d9",
       "roundness": null,
       "seed": 140079,
-      "version": 305,
-      "versionNonce": 2114225835,
+      "version": 340,
+      "versionNonce": 517758225,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1776356881403,
+      "updated": 1776388818730,
       "link": null,
       "locked": false,
       "text": "🔑 id: UUID PK\n🔗 run_id: UUID FK (CASCADE)\n🔗 query_id: UUID FK\nreturned_ids: VARCHAR[]\nreturned_scores: FLOAT[]\nndcg: FLOAT\nrecall_at_k: FLOAT\nprecision_at_k: FLOAT\nlatency_ms: FLOAT",
-      "fontSize": 13,
+      "fontSize": 12.934996032714835,
       "fontFamily": 3,
       "textAlign": "left",
       "verticalAlign": "top",
@@ -1680,10 +1680,10 @@
     {
       "id": "dm_arr_run_result",
       "type": "arrow",
-      "x": 348.6241077548003,
-      "y": 963.6066125436375,
-      "width": 183.3479446160395,
-      "height": 121.54037561838163,
+      "x": 348.62410775480026,
+      "y": 971.8392052630991,
+      "width": 183.43950891865967,
+      "height": 131.61457866624824,
       "angle": 0,
       "strokeColor": "#2f9e44",
       "backgroundColor": "transparent",
@@ -1699,11 +1699,11 @@
         "type": 2
       },
       "seed": 140081,
-      "version": 472,
-      "versionNonce": 1065031115,
+      "version": 485,
+      "versionNonce": 1460659071,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1776356899983,
+      "updated": 1776388815030,
       "link": null,
       "locked": false,
       "points": [
@@ -1712,8 +1712,8 @@
           0
         ],
         [
-          183.3479446160395,
-          121.54037561838163
+          183.43950891865967,
+          131.61457866624824
         ]
       ],
       "lastCommittedPoint": null,
@@ -1771,10 +1771,10 @@
     {
       "id": "dm_arr_query_result",
       "type": "arrow",
-      "x": 734.6899943323743,
+      "x": 735.0311869474192,
       "y": 881.0896011953196,
-      "width": 0.17728072253908067,
-      "height": 132.94891582801142,
+      "width": 0.04090814587152636,
+      "height": 132.8302348296196,
       "angle": 0,
       "strokeColor": "#0c8599",
       "backgroundColor": "transparent",
@@ -1790,11 +1790,11 @@
         "type": 2
       },
       "seed": 140085,
-      "version": 445,
-      "versionNonce": 1540339403,
+      "version": 458,
+      "versionNonce": 929373087,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1776356881403,
+      "updated": 1776388815030,
       "link": null,
       "locked": false,
       "points": [
@@ -1803,8 +1803,8 @@
           0
         ],
         [
-          0.17728072253908067,
-          132.94891582801142
+          0.04090814587152636,
+          132.8302348296196
         ]
       ],
       "lastCommittedPoint": null,
@@ -1850,10 +1850,6 @@
         {
           "id": "dm_arr_run_metrics",
           "type": "arrow"
-        },
-        {
-          "type": "text",
-          "id": "8ODgmHyv17L7sxwAPvL6s"
         }
       ],
       "updated": 1776356912969,

@@ -42,11 +42,6 @@ async def dedup_check(
     if results[0].id == record_id:
         return False
 
-    # Compute cosine similarity: both vectors should be unit-normalized
-    import numpy as np
-
-    similarity = float(np.dot(vector, results[0].metadata.get("_vector", [])))
-    # Since we can't easily get the raw vector back, use the score (L2 distance)
     # Convert L2 distance to cosine similarity approximation
     distance = results[0].score
     similarity = 1.0 / (1.0 + distance)
